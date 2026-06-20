@@ -47,6 +47,8 @@ header{background:var(--navy);border-bottom:3px solid var(--gold);padding:0 28px
 .avatar{width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--navy);font-size:13px;flex-shrink:0}
 .user-name{color:#fff;font-size:12px;font-weight:600}
 .user-role{color:var(--slate-light);font-size:10px}
+.logout-btn{display:flex;align-items:center;gap:6px;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:#F2A29B;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s,color .15s}
+.logout-btn:hover{background:var(--red);color:#fff}
 
 /* MAIN */
 main{max-width:1380px;margin:0 auto;padding:28px 24px}
@@ -267,6 +269,9 @@ footer{text-align:center;padding:20px;color:var(--slate-light);font-size:11px;bo
           <div class="user-role">مدير المتجر</div>
         </div>
       </div>
+      <button class="logout-btn" onclick="logoutUser()" title="تسجيل الخروج">
+        ⏻ <span>تسجيل الخروج</span>
+      </button>
     </div>
   </div>
 </header>
@@ -647,6 +652,14 @@ function showToast(msg,type){
 
 /* FOOTER CLOCK */
 document.getElementById('last-sync').textContent=new Date().toLocaleTimeString('ar-DZ');
+
+/* LOGOUT */
+function logoutUser(){
+  if(!confirm('هل تريد تسجيل الخروج؟')) return;
+  localStorage.removeItem('optiprice_user');
+  sessionStorage.removeItem('optiprice_user');
+  window.location.href = 'login.html';
+}
 
 /* INIT */
 renderAll();
