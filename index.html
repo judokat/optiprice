@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OptiPrice — لوحة التحكم</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1E3D;--navy-mid:#122447;--navy-light:#1A3260;
+  --white:#FFFFFF;--off-white:#F7F8FA;
+  --slate:#6B7A99;--slate-light:#9BABC9;--slate-border:#D4DBE9;
+  --emerald:#0D7A5F;--emerald-light:#E6F4F1;--emerald-bright:#10B094;
+  --gold:#C9A227;--gold-light:#FDF6E3;
+  --red:#C0392B;--red-light:#FDECEA;
+  --amber:#E67E22;--amber-light:#FEF5EB;
+  --indigo:#4338CA;--indigo-light:#EEF2FF;
+}
+body{font-family:'Segoe UI','Tahoma',Arial,sans-serif;direction:rtl;background:var(--off-white);color:var(--navy);min-height:100vh}
+
+/* HEADER */
+header{background:var(--navy);border-bottom:3px solid var(--gold);padding:0 28px;position:sticky;top:0;z-index:100}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-box{width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:var(--navy);flex-shrink:0}
+.logo-title{color:#fff;font-size:17px;font-weight:700;letter-spacing:.3px}
+.logo-sub{color:var(--slate-light);font-size:11px}
+.store-name{text-align:center}
+.store-name .main{color:var(--gold);font-size:15px;font-weight:700}
+.store-name .branch{color:var(--slate-light);font-size:11px}
+.header-right{display:flex;align-items:center;gap:14px}
+.conn-badge{display:flex;align-items:center;gap:6px;background:rgba(13,122,95,.18);padding:5px 12px;border-radius:20px}
+.conn-dot{width:8px;height:8px;background:var(--emerald-bright);border-radius:50%;box-shadow:0 0 6px var(--emerald-bright);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.conn-label{color:var(--emerald-bright);font-size:12px;font-weight:600}
+.bell-wrap{position:relative}
+.bell-btn{background:rgba(255,255,255,.08);border:none;border-radius:8px;width:36px;height:36px;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;font-size:18px}
+.bell-badge{position:absolute;top:4px;right:4px;background:var(--red);color:#fff;border-radius:8px;width:15px;height:15px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.notif-panel{display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);background:#fff;border-radius:12px;box-shadow:0 8px 40px rgba(11,30,61,.2);width:320px;border:1px solid var(--slate-border);overflow:hidden;z-index:200}
+.notif-panel.open{display:block}
+.notif-header{background:var(--navy);padding:12px 16px;color:#fff;font-size:13px;font-weight:700}
+.notif-row{padding:10px 16px;border-bottom:1px solid var(--slate-border);display:flex;gap:10px;align-items:flex-start}
+.notif-time{font-size:10px;color:var(--slate);min-width:36px;margin-top:2px}
+.notif-msg{font-size:12px;color:var(--navy);line-height:1.5}
+.user-wrap{display:flex;align-items:center;gap:8px}
+.avatar{width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--navy);font-size:13px;flex-shrink:0}
+.user-name{color:#fff;font-size:12px;font-weight:600}
+.user-role{color:var(--slate-light);font-size:10px}
+
+/* MAIN */
+main{max-width:1380px;margin:0 auto;padding:28px 24px}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px}
+.metric-card{border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;border:1px solid}
+.metric-card .mc-icon{position:absolute;top:16px;left:16px;font-size:28px;opacity:.15}
+.mc-sub{font-size:12px;color:var(--slate);margin-bottom:2px}
+.mc-label{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.mc-value-row{display:flex;align-items:baseline;gap:6px}
+.mc-value{font-size:32px;font-weight:800;line-height:1}
+.mc-unit{font-size:13px;color:var(--slate)}
+.mc-trend{margin-top:10px;font-size:11px;display:inline-block;padding:3px 9px;border-radius:12px;background:rgba(0,0,0,.04)}
+
+/* MIDDLE GRID */
+.mid-grid{display:grid;grid-template-columns:1fr 1.65fr;gap:22px;margin-bottom:28px}
+
+/* PANEL */
+.panel{background:#fff;border-radius:16px;border:1px solid var(--slate-border);overflow:hidden}
+.panel-header{background:var(--navy);padding:16px 22px;display:flex;align-items:center;gap:10px}
+.panel-header-icon{font-size:18px}
+.panel-header-title{color:#fff;font-size:15px;font-weight:700}
+.panel-header-sub{color:var(--slate-light);font-size:11px}
+.panel-header-right{margin-right:auto;color:var(--slate-light);font-size:12px}
+.panel-body{padding:22px}
+
+/* RULE CARDS */
+.rule-card{background:var(--off-white);border-radius:12px;padding:18px;margin-bottom:16px;border:1px solid var(--slate-border)}
+.rule-card:last-child{margin-bottom:0}
+.rule-title-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.rule-title{font-size:13px;font-weight:700;color:var(--navy)}
+.rule-sub{font-size:11px;color:var(--slate)}
+
+/* SLIDERS */
+.slider-row{margin-bottom:14px}
+.slider-labels{display:flex;justify-content:space-between;margin-bottom:6px;align-items:center}
+.slider-label{font-size:12px;color:var(--slate)}
+.slider-val{font-size:13px;font-weight:700}
+input[type=range]{width:100%;height:4px;border-radius:2px;outline:none;border:none;cursor:pointer;-webkit-appearance:none;background:var(--slate-border)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.slider-red::-webkit-slider-thumb{background:var(--red)}
+.slider-emerald::-webkit-slider-thumb{background:var(--emerald)}
+
+/* LOGIC BOX */
+.logic-box{background:var(--navy);color:#fff;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.6}
+
+/* APPLY BTN */
+.apply-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:8px;padding:10px 0;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;font-family:inherit}
+.apply-btn:hover{opacity:.88}
+
+/* TOGGLE ROW */
+.toggle-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.toggle-info .tg-title{font-size:12px;font-weight:600;color:var(--navy)}
+.toggle-info .tg-sub{font-size:11px;color:var(--slate)}
+.toggle{width:44px;height:24px;border-radius:12px;cursor:pointer;position:relative;transition:background .25s;flex-shrink:0}
+.toggle-thumb{position:absolute;top:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:left .25s;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.supplier-info{margin-top:12px;background:var(--emerald-light);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--emerald);line-height:1.6}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--off-white)}
+th{padding:10px 14px;text-align:right;color:var(--slate);font-weight:600;font-size:12px;border-bottom:1px solid var(--slate-border);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid var(--slate-border);vertical-align:middle}
+tr.syncing-row{background:rgba(230,126,34,.04)}
+.td-name{font-weight:600;color:var(--navy);margin-bottom:2px}
+.td-cat{font-size:10px;color:var(--slate)}
+.td-expiry-warn{font-size:10px;color:var(--red);margin-top:2px}
+.td-barcode{font-family:monospace;font-size:11px;color:var(--slate);direction:ltr}
+.td-pos{font-weight:700;color:var(--indigo);direction:ltr}
+.td-esl{font-weight:700;direction:ltr}
+.td-esl .discounted{font-size:10px;color:var(--emerald)}
+.batt-wrap{display:flex;align-items:center;gap:6px}
+.batt-bar{width:42px;height:6px;background:#E2E8F0;border-radius:3px;overflow:hidden}
+.batt-fill{height:100%;border-radius:3px;transition:width .5s}
+.batt-pct{font-size:11px;font-weight:600}
+.badge{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.badge-synced{background:var(--emerald-light);color:var(--emerald)}
+.badge-syncing{background:var(--amber-light);color:var(--amber)}
+.badge-pending{background:var(--indigo-light);color:var(--indigo)}
+.update-btn{background:var(--navy);color:#fff;border:none;border-radius:7px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:inherit}
+.update-btn:hover{opacity:.85}
+.update-btn:disabled{background:var(--off-white);color:var(--slate);cursor:not-allowed}
+
+/* BOTTOM GRID */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.stat-card{background:#fff;border:1px solid var(--slate-border);border-radius:14px;padding:20px 22px}
+.stat-card.dark{background:var(--navy);border-color:var(--navy-light)}
+.stat-card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:16px}
+.stat-card.dark .stat-card-title{color:var(--gold)}
+.sync-bar-row{margin-bottom:12px}
+.sync-bar-labels{display:flex;justify-content:space-between;margin-bottom:4px}
+.sync-bar-label{font-size:12px;color:var(--slate)}
+.sync-bar-val{font-size:12px;font-weight:700}
+.sync-bar-track{height:6px;background:#E2E8F0;border-radius:3px}
+.sync-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.batt-alert-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--slate-border)}
+.batt-alert-name{font-size:12px;font-weight:600;color:var(--navy)}
+.batt-alert-code{font-size:10px;color:var(--slate)}
+.quick-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.quick-row:last-child{border-bottom:none}
+.quick-label{font-size:12px;color:var(--slate-light)}
+.quick-val{font-size:14px;font-weight:700;color:#fff}
+.quick-unit{font-size:11px;color:var(--slate-light)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(11,30,61,.55);z-index:9000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:32px;width:420px;max-width:95vw;box-shadow:0 16px 60px rgba(11,30,61,.25)}
+.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.modal-title{font-size:17px;font-weight:700;color:var(--navy)}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--slate);line-height:1}
+.modal-product-box{background:var(--off-white);border-radius:10px;padding:14px 18px;margin-bottom:18px}
+.modal-pname{font-size:15px;font-weight:700;margin-bottom:4px}
+.modal-barcode{font-size:12px;color:var(--slate)}
+.modal-prices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.modal-price-box{border-radius:8px;padding:10px 14px}
+.modal-price-box.pos{background:var(--indigo-light)}
+.modal-price-box.esl{background:var(--emerald-light)}
+.modal-price-label{font-size:11px;margin-bottom:4px}
+.modal-price-box.pos .modal-price-label{color:var(--indigo)}
+.modal-price-box.esl .modal-price-label{color:var(--emerald)}
+.modal-price-val{font-size:18px;font-weight:700}
+.modal-price-box.pos .modal-price-val{color:var(--indigo)}
+.modal-price-box.esl .modal-price-val{color:var(--emerald)}
+.modal-input-label{display:block;font-size:13px;color:var(--slate);margin-bottom:6px}
+.modal-input{width:100%;padding:11px 14px;border-radius:8px;border:1.5px solid var(--slate-border);font-size:16px;font-weight:600;outline:none;direction:ltr;text-align:right;color:var(--navy);font-family:inherit;transition:border-color .2s}
+.modal-input:focus{border-color:var(--navy)}
+.modal-warn{margin-top:10px;font-size:12px;color:var(--amber);background:var(--amber-light);padding:8px 12px;border-radius:6px;display:none}
+.modal-warn.show{display:block}
+.modal-actions{display:flex;gap:10px;margin-top:20px}
+.modal-confirm{flex:1;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:12px 0;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.modal-confirm:hover{opacity:.88}
+.modal-cancel{flex:0 0 auto;width:90px;background:var(--off-white);color:var(--slate);border:1px solid var(--slate-border);border-radius:8px;padding:12px 0;font-size:14px;cursor:pointer;font-family:inherit}
+
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;z-index:9999;color:#fff;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 24px rgba(0,0,0,.18);max-width:380px;line-height:1.5;display:none;animation:fadeIn .3s}
+.toast.show{display:block}
+.toast.success{background:var(--emerald)}
+.toast.warning{background:var(--amber)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+
+/* FOOTER */
+footer{text-align:center;padding:20px;color:var(--slate-light);font-size:11px;border-top:1px solid var(--slate-border);margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-top">
+      <span class="modal-title">تحديث السعر اليدوي</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-product-box">
+      <div class="modal-pname" id="modal-pname"></div>
+      <div class="modal-barcode" id="modal-barcode"></div>
+    </div>
+    <div class="modal-prices">
+      <div class="modal-price-box pos">
+        <div class="modal-price-label">سعر POS الحالي</div>
+        <div class="modal-price-val" id="modal-pos-price"></div>
+      </div>
+      <div class="modal-price-box esl">
+        <div class="modal-price-label">سعر ESL الحالي</div>
+        <div class="modal-price-val" id="modal-esl-price"></div>
+      </div>
+    </div>
+    <label class="modal-input-label">السعر الجديد (دج)</label>
+    <input type="number" class="modal-input" id="modal-new-price" oninput="checkModalWarn()"/>
+    <div class="modal-warn" id="modal-warn">⚠ السعر مختلف عن سعر POS — سيتم تسجيله كاستثناء يدوي</div>
+    <div class="modal-actions">
+      <button class="modal-confirm" onclick="confirmUpdate()">إرسال إلى شاشة ESL اللاسلكية</button>
+      <button class="modal-cancel" onclick="closeModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel">
+  <div class="notif-header">سجل النشاط الأخير</div>
+  <div class="notif-row"><span class="notif-time">14:32</span><span class="notif-msg">تم تحديث سعر 12 منتجاً في قسم الألبان</span></div>
+  <div class="notif-row"><span class="notif-time">14:18</span><span class="notif-msg">تزامن ESL رف B-07 — 8 شاشات</span></div>
+  <div class="notif-row"><span class="notif-time">13:55</span><span class="notif-msg">تحذير: بطارية منخفضة على شاشة ESL-045</span></div>
+  <div class="notif-row"><span class="notif-time">13:40</span><span class="notif-msg">تطبيق خوارزمية الصلاحية — تخفيض 15% على 3 منتجات</span></div>
+  <div class="notif-row"><span class="notif-time">13:15</span><span class="notif-msg">تحديث أسعار المورد: الباردة والمبردة</span></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <div class="logo-box">OP</div>
+      <div>
+        <div class="logo-title">OptiPrice</div>
+        <div class="logo-sub">منصة التسعير الديناميكي</div>
+      </div>
+    </div>
+    <div class="store-name">
+      <div class="main">سوبرماركت النجمة الذهبية</div>
+      <div class="branch">وحدة: باب الزوار — الجزائر العاصمة</div>
+    </div>
+    <div class="header-right">
+      <div class="conn-badge"><span class="conn-dot"></span><span class="conn-label">POS متصل</span></div>
+      <div class="conn-badge"><span class="conn-dot"></span><span class="conn-label">ESL Server متصل</span></div>
+      <div class="bell-wrap">
+        <button class="bell-btn" onclick="toggleNotif(event)">🔔<span class="bell-badge" id="bell-badge">3</span></button>
+      </div>
+      <div class="user-wrap">
+        <div class="avatar">أح</div>
+        <div>
+          <div class="user-name">أحمد بن علي</div>
+          <div class="user-role">مدير المتجر</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- METRICS -->
+  <div class="metrics-grid">
+    <div class="metric-card" style="background:#fff;border-color:var(--slate-border)">
+      <div class="mc-icon">📦</div>
+      <div class="mc-sub">Total Synced Products</div>
+      <div class="mc-label">إجمالي المنتجات المزامنة</div>
+      <div class="mc-value-row"><span class="mc-value" style="color:var(--navy)" id="synced-count">1,847</span><span class="mc-unit">منتج</span></div>
+      <div class="mc-trend" style="color:var(--navy)">+47 هذا الأسبوع</div>
+    </div>
+    <div class="metric-card" style="background:var(--indigo-light);border-color:#C4B5FD">
+      <div class="mc-icon">📟</div>
+      <div class="mc-sub">Active ESL Screens</div>
+      <div class="mc-label">شاشات ESL النشطة</div>
+      <div class="mc-value-row"><span class="mc-value" style="color:var(--indigo)">312</span><span class="mc-unit">شاشة</span></div>
+      <div class="mc-trend" style="color:var(--indigo)">312 / 320 متصلة</div>
+    </div>
+    <div class="metric-card" style="background:var(--emerald-light);border-color:#6EE7D4">
+      <div class="mc-icon">💰</div>
+      <div class="mc-sub">Saved Printing Costs</div>
+      <div class="mc-label">التكاليف الموفرة (طباعة)</div>
+      <div class="mc-value-row"><span class="mc-value" style="color:var(--emerald)">284.6k</span><span class="mc-unit">دج</span></div>
+      <div class="mc-trend" style="color:var(--emerald)">منذ تفعيل النظام</div>
+    </div>
+    <div class="metric-card" style="background:var(--amber-light);border-color:#FCD34D">
+      <div class="mc-icon">⏳</div>
+      <div class="mc-sub">Pending Price Updates</div>
+      <div class="mc-label">تحديثات الأسعار المعلقة</div>
+      <div class="mc-value-row"><span class="mc-value" style="color:var(--amber)" id="pending-val">3</span><span class="mc-unit">طلب</span></div>
+      <div class="mc-trend" style="color:var(--amber)">انتظار الموافقة</div>
+    </div>
+  </div>
+
+  <!-- MIDDLE: CONTROL PANEL + TABLE -->
+  <div class="mid-grid">
+
+    <!-- LEFT: PRICING PANEL -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-header-icon">⚙️</span>
+        <div>
+          <div class="panel-header-title">لوحة التحكم في خوارزميات التسعير</div>
+          <div class="panel-header-sub">Pricing Logic Control Panel</div>
+        </div>
+      </div>
+      <div class="panel-body">
+
+        <!-- Rule 1 -->
+        <div class="rule-card">
+          <div class="rule-title-row">
+            <span style="font-size:16px">📅</span>
+            <div>
+              <div class="rule-title">خوارزمية تخفيضات تاريخ الصلاحية</div>
+              <div class="rule-sub">Expiry-Date Discount Logic</div>
+            </div>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-labels">
+              <span class="slider-label">تخفيض عند اقتراب الصلاحية بـ</span>
+              <span class="slider-val" style="color:var(--red)" id="expiry-days-val">7 أيام</span>
+            </div>
+            <input type="range" class="slider-red" id="expiry-days" min="1" max="30" value="7"
+              oninput="document.getElementById('expiry-days-val').textContent=this.value+' أيام';updateLogicBox()"/>
+          </div>
+
+          <div class="slider-row">
+            <div class="slider-labels">
+              <span class="slider-label">نسبة التخفيض المطبقة</span>
+              <span class="slider-val" style="color:var(--emerald)" id="expiry-disc-val">15%</span>
+            </div>
+            <input type="range" class="slider-emerald" id="expiry-disc" min="5" max="50" value="15"
+              oninput="document.getElementById('expiry-disc-val').textContent=this.value+'%';updateLogicBox()"/>
+          </div>
+
+          <div class="logic-box" id="logic-box">
+            📋 المنطق: إذا كانت أيام الصلاحية المتبقية ≤ <strong>7</strong> يوم، يتم تخفيض السعر تلقائياً بنسبة <strong>15%</strong> وإرسال التحديث إلى شاشة ESL فوراً.
+          </div>
+
+          <button class="apply-btn" onclick="applyExpiryRules()">▶ تطبيق الخوارزمية الآن</button>
+        </div>
+
+        <!-- Rule 2 -->
+        <div class="rule-card">
+          <div class="rule-title-row">
+            <span style="font-size:16px">🔗</span>
+            <div>
+              <div class="rule-title">حماية هامش الربح عند تغير سعر المورد</div>
+              <div class="rule-sub">Supplier Cost Margin Protection</div>
+            </div>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="tg-title">مزامنة أسعار المورد تلقائياً</div>
+              <div class="tg-sub">Auto-sync supplier price changes</div>
+            </div>
+            <div class="toggle" id="tg-supplier" style="background:var(--emerald)" onclick="toggleSwitch('tg-supplier','supplier-info')">
+              <div class="toggle-thumb" style="left:22px"></div>
+            </div>
+          </div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="tg-title">حماية الحد الأدنى للهامش (15%)</div>
+              <div class="tg-sub">Minimum margin floor protection</div>
+            </div>
+            <div class="toggle" id="tg-margin" style="background:var(--emerald)" onclick="toggleSwitch('tg-margin',null)">
+              <div class="toggle-thumb" style="left:22px"></div>
+            </div>
+          </div>
+
+          <div class="supplier-info" id="supplier-info">
+            ✓ النظام يراقب قاعدة بيانات الموردين كل 15 دقيقة ويحدّث الأسعار تلقائياً مع الحفاظ على هامش 15% كحد أدنى.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT: ESL TABLE -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-header-icon">📟</span>
+        <div>
+          <div class="panel-header-title">جدول المنتجات والرفوف الرقمية</div>
+          <div class="panel-header-sub">Live ESL Inventory Table</div>
+        </div>
+        <div class="panel-header-right">8 منتج مسجّل</div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>المنتج</th><th>الباركود</th><th>سعر POS</th><th>سعر ESL</th><th>البطارية</th><th>الحالة</th><th>تحديث</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM ROW -->
+  <div class="bottom-grid">
+
+    <!-- Sync Status -->
+    <div class="stat-card">
+      <div class="stat-card-title">📊 حالة التزامن العام</div>
+      <div id="sync-bars"></div>
+    </div>
+
+    <!-- Battery Alerts -->
+    <div class="stat-card">
+      <div class="stat-card-title">🔋 تحذيرات البطارية</div>
+      <div id="battery-alerts"></div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stat-card dark">
+      <div class="stat-card-title">⚡ إحصاءات سريعة</div>
+      <div class="quick-row"><span class="quick-label">تحديثات اليوم</span><span class="quick-val">127 <span class="quick-unit">عملية</span></span></div>
+      <div class="quick-row"><span class="quick-label">متوسط وقت التزامن</span><span class="quick-val">1.8 <span class="quick-unit">ثانية</span></span></div>
+      <div class="quick-row"><span class="quick-label">توفير الطباعة اليوم</span><span class="quick-val">2,400 <span class="quick-unit">دج</span></span></div>
+      <div class="quick-row" id="expiry-quick-row"><span class="quick-label">منتجات قرب الصلاحية</span><span class="quick-val" id="expiry-count">3 <span class="quick-unit">منتج</span></span></div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  OptiPrice v2.4.1 — نظام التسعير الديناميكي للمتاجر الجزائرية • آخر مزامنة: <span id="last-sync"></span>
+</footer>
+
+<script>
+const products = [
+  {id:1,name:"زيت زيتون إيطالي",barcode:"3012345678901",posPrice:1250,eslPrice:1250,battery:87,status:"synced",expiry:15,category:"زيوت"},
+  {id:2,name:"حليب كامل الدسم 1L",barcode:"3019876543210",posPrice:185,eslPrice:185,battery:62,status:"synced",expiry:3,category:"ألبان"},
+  {id:3,name:"جبن شيدر مستورد",barcode:"3011234567890",posPrice:890,eslPrice:870,battery:45,status:"syncing",expiry:8,category:"ألبان"},
+  {id:4,name:"دقيق القمح الممتاز 5kg",barcode:"3018765432109",posPrice:420,eslPrice:420,battery:91,status:"synced",expiry:180,category:"مواد أساسية"},
+  {id:5,name:"عصير برتقال طبيعي",barcode:"3015432167890",posPrice:310,eslPrice:310,battery:23,status:"synced",expiry:5,category:"مشروبات"},
+  {id:6,name:"لحم مفروم طازج",barcode:"3016543278901",posPrice:1800,eslPrice:1800,battery:78,status:"pending",expiry:2,category:"لحوم"},
+  {id:7,name:"خضار مجمدة مشكلة",barcode:"3017654389012",posPrice:390,eslPrice:390,battery:55,status:"synced",expiry:365,category:"مجمدات"},
+  {id:8,name:"بسكويت أوريو عائلي",barcode:"3014321956703",posPrice:265,eslPrice:250,battery:34,status:"syncing",expiry:25,category:"حلويات"},
+];
+
+let syncingIds = [];
+let modalProductId = null;
+let pendingCount = 3;
+
+function battColor(v){return v>60?'var(--emerald)':v>25?'var(--amber)':'var(--red)'}
+function battBg(v){return v>60?'var(--emerald-light)':v>25?'var(--amber-light)':'var(--red-light)'}
+
+function statusBadge(status){
+  const m={
+    synced:{label:'مزامن ✓',cls:'badge-synced'},
+    syncing:{label:'جارٍ التزامن...⟳',cls:'badge-syncing'},
+    pending:{label:'معلّق',cls:'badge-pending'}
+  };
+  const s=m[status]||m.pending;
+  return `<span class="badge ${s.cls}">${s.label}</span>`;
+}
+
+function renderTable(){
+  const days=+document.getElementById('expiry-days').value;
+  const tbody=document.getElementById('products-tbody');
+  tbody.innerHTML=products.map(p=>{
+    const isSyncing=syncingIds.includes(p.id);
+    const changed=p.posPrice!==p.eslPrice;
+    const status=isSyncing?'syncing':p.status;
+    return `<tr class="${isSyncing?'syncing-row':''}">
+      <td>
+        <div class="td-name">${p.name}</div>
+        <div class="td-cat">${p.category}</div>
+        ${p.expiry<=days?`<div class="td-expiry-warn">⚠ صلاحية: ${p.expiry} أيام</div>`:''}
+      </td>
+      <td class="td-barcode">${p.barcode}</td>
+      <td class="td-pos">${p.posPrice.toLocaleString()}</td>
+      <td class="td-esl" style="color:${changed?'var(--emerald)':'var(--navy)'}">
+        ${p.eslPrice.toLocaleString()}
+        ${changed?'<div class="discounted">مخفّض</div>':''}
+      </td>
+      <td>
+        <div class="batt-wrap">
+          <div class="batt-bar"><div class="batt-fill" style="width:${p.battery}%;background:${battColor(p.battery)}"></div></div>
+          <span class="batt-pct" style="color:${battColor(p.battery)}">${p.battery}%</span>
+        </div>
+      </td>
+      <td>${statusBadge(status)}</td>
+      <td><button class="update-btn" onclick="openModal(${p.id})" ${isSyncing?'disabled':''}>
+        ${isSyncing?'⟳ يتزامن...':'تحديث ✎'}
+      </button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderSyncBars(){
+  const days=+document.getElementById('expiry-days').value;
+  const synced=products.filter(p=>p.status==='synced').length;
+  const syncing=products.filter(p=>p.status==='syncing').length+syncingIds.length;
+  const total=products.length;
+  document.getElementById('sync-bars').innerHTML=`
+    <div class="sync-bar-row">
+      <div class="sync-bar-labels">
+        <span class="sync-bar-label">مزامن بالكامل</span>
+        <span class="sync-bar-val" style="color:var(--emerald)">${synced}</span>
+      </div>
+      <div class="sync-bar-track"><div class="sync-bar-fill" style="width:${(synced/total*100).toFixed(0)}%;background:var(--emerald)"></div></div>
+    </div>
+    <div class="sync-bar-row">
+      <div class="sync-bar-labels">
+        <span class="sync-bar-label">قيد التزامن</span>
+        <span class="sync-bar-val" style="color:var(--amber)">${syncing}</span>
+      </div>
+      <div class="sync-bar-track"><div class="sync-bar-fill" style="width:${Math.min(100,(syncing/total*100)).toFixed(0)}%;background:var(--amber)"></div></div>
+    </div>
+    <div class="sync-bar-row">
+      <div class="sync-bar-labels">
+        <span class="sync-bar-label">في قائمة الانتظار</span>
+        <span class="sync-bar-val" style="color:var(--indigo)">${pendingCount}</span>
+      </div>
+      <div class="sync-bar-track"><div class="sync-bar-fill" style="width:${Math.min(100,pendingCount*10)}%;background:var(--indigo)"></div></div>
+    </div>`;
+
+  const nearExpiry=products.filter(p=>p.expiry<=days).length;
+  document.getElementById('expiry-count').innerHTML=`${nearExpiry} <span class="quick-unit">منتج</span>`;
+}
+
+function renderBatteryAlerts(){
+  const low=products.filter(p=>p.battery<50).sort((a,b)=>a.battery-b.battery);
+  document.getElementById('battery-alerts').innerHTML=low.map(p=>`
+    <div class="batt-alert-row">
+      <div>
+        <div class="batt-alert-name">${p.name.substring(0,22)}...</div>
+        <div class="batt-alert-code">${p.barcode.slice(-6)}</div>
+      </div>
+      <span class="badge" style="background:${battBg(p.battery)};color:${battColor(p.battery)}">${p.battery}%</span>
+    </div>`).join('');
+}
+
+function renderAll(){renderTable();renderSyncBars();renderBatteryAlerts();}
+
+/* MODAL */
+function openModal(id){
+  const p=products.find(x=>x.id===id);
+  if(!p)return;
+  modalProductId=id;
+  document.getElementById('modal-pname').textContent=p.name;
+  document.getElementById('modal-barcode').textContent='الباركود: '+p.barcode;
+  document.getElementById('modal-pos-price').textContent=p.posPrice.toLocaleString()+' دج';
+  document.getElementById('modal-esl-price').textContent=p.eslPrice.toLocaleString()+' دج';
+  document.getElementById('modal-new-price').value=p.eslPrice;
+  document.getElementById('modal-warn').classList.remove('show');
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function checkModalWarn(){
+  const p=products.find(x=>x.id===modalProductId);
+  const v=+document.getElementById('modal-new-price').value;
+  document.getElementById('modal-warn').classList.toggle('show',p&&v!==p.posPrice);
+}
+function confirmUpdate(){
+  const p=products.find(x=>x.id===modalProductId);
+  const v=parseInt(document.getElementById('modal-new-price').value);
+  if(!p||isNaN(v))return;
+  closeModal();
+  syncingIds.push(p.id);
+  renderAll();
+  setTimeout(()=>{
+    p.eslPrice=v;p.status='synced';
+    syncingIds=syncingIds.filter(x=>x!==p.id);
+    pendingCount=Math.max(0,pendingCount-1);
+    document.getElementById('pending-val').textContent=pendingCount;
+    document.getElementById('bell-badge').textContent=pendingCount;
+    renderAll();
+    showToast(`✓ تم تحديث سعر "${p.name}" إلى ${v.toLocaleString()} دج`,'success');
+  },2200);
+}
+
+/* EXPIRY RULES */
+function applyExpiryRules(){
+  const days=+document.getElementById('expiry-days').value;
+  const disc=+document.getElementById('expiry-disc').value;
+  let changed=0;
+  products.forEach(p=>{
+    if(p.expiry<=days){changed++;p.eslPrice=Math.round(p.posPrice*(1-disc/100));p.status='syncing';}
+  });
+  renderAll();
+  setTimeout(()=>{
+    products.forEach(p=>{if(p.expiry<=days)p.status='synced';});
+    renderAll();
+    showToast(`✓ تم تطبيق خوارزمية الصلاحية على ${changed} منتجات`,'success');
+  },2000);
+}
+
+/* LOGIC BOX */
+function updateLogicBox(){
+  const days=document.getElementById('expiry-days').value;
+  const disc=document.getElementById('expiry-disc').value;
+  document.getElementById('logic-box').innerHTML=`📋 المنطق: إذا كانت أيام الصلاحية المتبقية ≤ <strong>${days}</strong> يوم، يتم تخفيض السعر تلقائياً بنسبة <strong>${disc}%</strong> وإرسال التحديث إلى شاشة ESL فوراً.`;
+  renderAll();
+}
+
+/* TOGGLE */
+function toggleSwitch(id,infoId){
+  const el=document.getElementById(id);
+  const thumb=el.querySelector('.toggle-thumb');
+  const isOn=el.style.background==='var(--emerald)'||el.style.background.includes('0D7A5F');
+  if(isOn){el.style.background='var(--slate-light)';thumb.style.left='3px';}
+  else{el.style.background='var(--emerald)';thumb.style.left='22px';}
+  if(infoId){
+    document.getElementById(infoId).style.display=isOn?'none':'block';
+  }
+}
+
+/* NOTIFICATION */
+function toggleNotif(e){
+  e.stopPropagation();
+  document.getElementById('notif-panel').classList.toggle('open');
+}
+document.addEventListener('click',()=>document.getElementById('notif-panel').classList.remove('open'));
+document.getElementById('notif-panel').addEventListener('click',e=>e.stopPropagation());
+
+/* TOAST */
+let toastTimer;
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+/* FOOTER CLOCK */
+document.getElementById('last-sync').textContent=new Date().toLocaleTimeString('ar-DZ');
+
+/* INIT */
+renderAll();
+</script>
+</body>
+</html>
+HTMLEOF
